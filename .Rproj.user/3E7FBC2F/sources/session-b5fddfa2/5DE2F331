@@ -1,0 +1,27 @@
+{
+    "id": "5DE2F331",
+    "path": "~/riar/src/form.cpp",
+    "project_path": "src/form.cpp",
+    "type": "cpp",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1733642723558.0,
+    "source_on_save": false,
+    "relative_order": 8,
+    "properties": {
+        "tempName": "Untitled1",
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "65,0",
+        "scrollLine": "0"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1733627328,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1733627328,
+    "read_only": false,
+    "read_only_alternatives": []
+}

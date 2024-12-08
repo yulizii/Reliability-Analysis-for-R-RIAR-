@@ -1,0 +1,2 @@
+"0","s<-matrix(runif(10*20),nrow=100,ncol=2)"
+"0","plot(s,main=""Hundred points"",xlab=""x"",ylab=""y"")"

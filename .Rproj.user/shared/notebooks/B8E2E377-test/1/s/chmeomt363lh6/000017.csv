@@ -1,0 +1,18 @@
+"0","library(riar)"
+"0",""
+"0","# 示例参数"
+"0"," mu<- c(2, 0)"
+"0","sigma <- c(2, 2)"
+"0","g <- c(1, 1)"
+"0","x0 <- c(0, 0)"
+"0",""
+"0","# 计算可靠度指标"
+"0","beta <- form(mu, sigma, g, x0)"
+"2","警告:"
+"2"," 重新评估被中断的许诺
+"
+"2","警告:"
+"2"," internal error 1 in R_decompress1 with libdeflate
+"
+"2","错误: lazy-load database 'C:/Users/Administrator/AppData/Local/R/win-library/4.4/riar/R/riar.rdb' is corrupt
+"

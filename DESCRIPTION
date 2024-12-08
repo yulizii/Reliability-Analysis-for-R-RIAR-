@@ -1,0 +1,19 @@
+Package: riar
+Type: Package
+Title: Reliability Analysis(RIA) for R
+Version: 1.0
+Date: 2024-12-08
+Author: Jiarui Gan
+Maintainer: Jiarui Gan <gjerrymath@163.com>
+Description: Reliability analysis for R, including support vector machine(SVM), Mento Carlo Simulation(MCS), First Order Reliability Method(FORM)
+License: GPL(>=2)
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+VignetteBuilder: knitr
+Imports: 
+    Rcpp,rmarkdown
+LinkingTo: 
+    Rcpp
+

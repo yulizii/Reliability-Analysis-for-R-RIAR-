@@ -1,0 +1,259 @@
+---
+title: "Untitled"
+author: "SA24005089"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(e1071)
+# 生成一个示例数据集
+set.seed(123)
+
+n <- 500  # 数据集大小
+X1 <- rnorm(n, mean = 2, sd = 2)
+X2 <- rnorm(n, mean = 0, sd = 2)
+
+# 创建失效标签，假设某些条件下产生失效
+Y <- ifelse(X1^2 + X2^2 > 3, 1, 0)
+
+# 将数据组合成数据框
+data <- data.frame(X1 = X1, X2 = X2, Y = as.factor(Y))
+
+# 训练SVM模型
+svm_model <- svm(Y ~ X1 + X2, data = data)
+
+# 查看模型概况
+summary(svm_model)
+
+# 使用SVM进行预测，输出0或1的预测值
+predictions <- predict(svm_model, data)
+
+# 输出预测的结果
+cat("预测的类别:", predictions, "\n")
+
+# 计算失效率
+P_f <- mean(predictions == "1")  # 计算预测为类别1的比例
+
+# 输出失效概率
+cat("失效概率 P_f:", P_f, "\n")
+
+# 计算可靠度指标 β
+# 使用 qnorm 函数计算 β
+beta <- -qnorm(P_f)  # P_f 是失效概率
+cat("可靠度指标 β:", beta, "\n")
+
+# 设置随机种子
+set.seed(1234)
+
+# 生成10000个随机样本
+n_samples <- 100000
+X1_random <- rnorm(n_samples)  # 生成 X1
+X2_random <- rnorm(n_samples)  # 生成 X2
+
+# 将随机样本组织成一个数据框
+random_data <- data.frame(X1 = X1_random, X2 = X2_random)
+
+# 使用 svm_model 对随机样本进行预测
+predictions_random <- predict(svm_model, random_data)
+
+# 计算随机样本的失效概率
+P_f_random <- mean(predictions_random == "1")
+
+# 输出随机样本的失效概率
+cat("随机样本的失效概率 P_f:", P_f_random, "\n")
+
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r}
+set.seed(135)  # 设置随机种子以确保可重复性
+
+# 限制状态函数 (示例)
+g <- function(x) {
+  return(x[1]^2 + x[2]^2 - 3)  # 例：圆的方程
+}
+
+# 蒙特卡洛模拟函数
+MCS <- function(mean, sd, n_samples) {
+  # 生成随机样本，使用正态分布
+  X1 <- rnorm(n_samples, mean[1], sd[1])  # X1 的生成
+  X2 <- rnorm(n_samples, mean[2], sd[2])  # X2 的生成
+  
+  # 将 X1 和 X2 合并成一个矩阵
+  samples <- cbind(X1, X2)
+  
+  # 计算限制状态函数值
+  g_values <- apply(samples, 1, g)
+  
+  # 计算失效事件的数量
+  failure_count <- sum(g_values <= 0)
+  
+  # 计算失效概率
+  Pf <- failure_count / n_samples
+  
+  return(Pf)
+}
+
+# 示例用法
+mean <- c(2, 0)  # 均值
+sd <- c(2, 2)    # 标准差
+n_samples <- 100000  # 样本数量
+
+# 计算失效概率
+Pf <- MCS(mean, sd, n_samples)
+cat("失效概率 P_f:", Pf, "\n")
+
+```
+```{R}
+# 加载必要的库
+library(ggplot2)
+library(e1071)
+
+# 设置随机种子
+set.seed(42)
+
+# 生成示例数据
+n <- 100
+x1 <- rnorm(n)
+x2 <- rnorm(n)
+data <- data.frame(x1 = x1, x2 = x2)
+
+# 定义真实的限制状态函数
+# g(x) = x1^2 + x2^2 - 1
+data$limit_state <- ifelse(data$x1^2 + data$x2^2 - 1 <= 0, 1, 0)
+
+# 检查数据是否有效
+if (nrow(data) == 0) {
+  stop("数据框为空，请检查数据生成过程。")
+}
+
+# 拟合 SVM 模型
+svm_model <- svm(limit_state ~ x1 + x2, data = data, kernel = "linear", cost = 10)
+
+# 生成网格数据以绘制 SVM 边界
+grid_x1 <- seq(-3, 3, length.out = 100)
+grid_x2 <- seq(-3, 3, length.out = 100)
+grid <- expand.grid(x1 = grid_x1, x2 = grid_x2)
+grid$limit_state_pred <- predict(svm_model, grid)
+
+# 检查网格数据是否有效
+if (nrow(grid) == 0) {
+  stop("网格数据框为空，请检查网格生成过程。")
+}
+
+# 绘制限制状态函数、SVM 边界和支持向量
+ggplot() +
+  # 绘制真实的限制状态函数
+  geom_contour(data = data, aes(x = x1, y = x2, z = x1^2 + x2^2 - 1), color = "blue", linetype = "dashed") +
+  geom_raster(data = grid, aes(x = x1, y = x2, fill = as.factor(limit_state_pred)), alpha = 0.2) +
+  scale_fill_manual(values = c("red", "green"), labels = c("Fail", "Safe"), name = "Prediction") +
+  geom_point(data = data[data$limit_state == 1, ], aes(x = x1, y = x2), color = "green", size = 2, alpha = 0.5) +
+  geom_point(data = data[data$limit_state == 0, ], aes(x = x1, y = x2), color = "red", size = 2, alpha = 0.5) +
+  geom_point(data = data[svm_model$index, ], aes(x = x1, y = x2), color = "black", size = 3, shape = 1) +  # 支持向量
+  labs(title = "Limit-State Function and SVM Prediction",
+       x = "X1",
+       y = "X2") +
+  theme_minimal()
+
+```
+
+```{r}
+set.seed(135)  # 设置随机种子以确保可重复性
+
+# 限制状态函数 (示例)
+g <- function(x) {
+  return(x[1]^2 + x[2]^2 - 3)  # 例：圆的方程
+}
+
+# 重要性采样函数
+importance_sampling <- function(n_samples, mean, sd, proposal_mean, proposal_sd) {
+  # 从提议分布中生成样本（正态分布）
+  samples <- matrix(rnorm(n_samples * 2, mean = proposal_mean, sd = proposal_sd), ncol = 2)
+  
+  # 计算限制状态函数值
+  g_values <- apply(samples, 1, g)
+  
+  # 计算失效事件的数量
+  failure_count <- sum(g_values <= 0)
+  
+  # 计算重要性权重
+  weights <- dnorm(samples[, 1], mean = proposal_mean[1], sd = proposal_sd[1]) * 
+             dnorm(samples[, 2], mean = proposal_mean[2], sd = proposal_sd[2]) /
+             (dnorm(samples[, 1], mean = mean[1], sd = sd[1]) * 
+              dnorm(samples[, 2], mean = mean[2], sd = sd[2]))
+  
+  # 计算加权失效概率
+  Pf <- sum(weights[g_values <= 0]) / sum(weights)
+  
+  return(Pf)
+}
+
+# 示例用法
+mean <- c(2, 0)  # 原始分布的均值
+sd <- c(2, 2)    # 原始分布的标准差
+n_samples <- 10000  # 样本数量
+
+# 提议分布的均值和标准差
+proposal_mean <- c(2, 0)
+proposal_sd <- c(2, 2)
+
+# 计算失效概率
+Pf_importance <- importance_sampling(n_samples, mean, sd, proposal_mean, proposal_sd)
+cat("通过重要性采样计算的失效概率 P_f:", Pf_importance, "\n")
+
+```
+
+
+```{R}
+# 定义 g 函数（在 MCS 外部）
+g <- function(x) {
+  return(x[1]^2 + x[2]^2 - 3)
+}
+
+
+# 测试代码
+set.seed(123)  # 设置随机种子以确保可重复性
+mean <- c(2, 1)
+sd <- c(1, 1)
+n_samples <- 10000
+
+# 生成样本并结合成一个矩阵 x
+x <- cbind(
+  rnorm(n_samples, mean[1], sd[1]),  # x1
+  rnorm(n_samples, mean[2], sd[2])   # x2
+)
+
+
+# 调用 MCS 函数，传入样本和 g 函数
+Pf_result <- MCS(x, g)
+print(Pf_result)
+
+proposal_mean <- c(0, 0)  # 提议分布的均值
+proposal_sd <- c(2, 2)    # 提议分布的标准差
+
+# 计算失效概率
+Pf <- importance_sampling(n_samples, mean, sd, proposal_mean, proposal_sd)
+print(Pf)
+```
+
+```{r}
+library(riar)
+library(Rcpp)
+fxp(50, 1)
+# 定义均值和标准差
+mu <- c(0, 0) # 示例均值
+sigma <- c(1, 1) # 示例标准差
+
+# 定义极限状态函数 g
+g <- function(x) {
+    return(x[1] + x[2] - 1) # 示例极限状态函数
+}
+
+# 调用 FORM 函数
+result <- form(mu, sigma, g)
+print(result)
+```

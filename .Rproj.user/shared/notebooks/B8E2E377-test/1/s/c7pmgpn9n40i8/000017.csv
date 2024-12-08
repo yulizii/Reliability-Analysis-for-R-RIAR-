@@ -1,0 +1,5 @@
+"0","library(riar)"
+"0","library(Rcpp)"
+"0","fxp(50, 1)"
+"2","错误于fxp(50, 1): 没有""fxp""这个函数
+"

@@ -1,0 +1,27 @@
+{
+    "id": "3C67C509",
+    "path": "~/riar/R/mcs_functions.R",
+    "project_path": "R/mcs_functions.R",
+    "type": "r_source",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1733581054056.0,
+    "source_on_save": false,
+    "relative_order": 1,
+    "properties": {
+        "tempName": "Untitled1",
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "21,32",
+        "scrollLine": "0"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1733627351,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1733627351484,
+    "read_only": false,
+    "read_only_alternatives": []
+}
