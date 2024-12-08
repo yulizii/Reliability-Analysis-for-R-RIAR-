@@ -11,9 +11,8 @@ Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
-VignetteBuilder: knitr
 Imports: 
-    Rcpp,rmarkdown
+    Rcpp,rmarkdown,sn,bootstrap,DAAG,twosamples,goftest,ggplot2
 LinkingTo: 
     Rcpp
 
